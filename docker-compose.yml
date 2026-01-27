@@ -13,13 +13,6 @@ services:
     volumes:
       - ./models:/root/.cache/whisper
       - ./audio-files:/app
-    command: >
-      whisper audio-file.mp3
-      --device cuda
-      --model turbo
-      --language Italian
-      --output_dir /app
-      --output_format txt
 
   whisper-cpu:
     build: .
@@ -28,9 +21,3 @@ services:
     volumes:
       - ./models:/root/.cache/whisper
       - ./audio-files:/app
-    command: >
-      whisper audio-file.mp3
-      --model turbo
-      --language Italian
-      --output_dir /app
-      --output_format txt

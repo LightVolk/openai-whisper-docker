@@ -18,17 +18,20 @@ Follow the instructions on the [official Docker website](https://docs.docker.com
 
 ### Using Docker Compose (recommended)
 
+Build the image:
+```bash
+docker compose --profile gpu build
+```
+
 #### GPU mode
 ```bash
-docker compose --profile gpu up --build
+docker compose run --rm whisper-gpu whisper audio-file.mp3 --device cuda --model turbo --language Italian --output_dir /app --output_format txt
 ```
 
 #### CPU mode
 ```bash
-docker compose --profile cpu up --build
+docker compose run --rm whisper-cpu whisper audio-file.mp3 --model turbo --language Italian --output_dir /app --output_format txt
 ```
-
-You can customize the audio file, model, and language by editing the `docker-compose.yml` file.
 
 ### Using Docker directly
 
