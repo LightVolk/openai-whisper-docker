@@ -1,0 +1,30 @@
+name: Docker Build & Run Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t openai-whisper .
+
+      - name: Verify whisper is installed
+        run: docker run --rm openai-whisper whisper --help
+
+      - name: Verify ffmpeg is installed
+        run: docker run --rm openai-whisper ffmpeg -version
+
+      - name: Verify Python is available
+        run: docker run --rm openai-whisper python3 --version
+
+      - name: Build with Docker Compose (CPU profile)
+        run: docker compose --profile cpu build
