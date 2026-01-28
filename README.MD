@@ -4,75 +4,78 @@
   <img src=".github/blue-button.png" alt="Buy Me A Coffee" width="200">
 </a>
 
-This Docker image provides a convenient environment for running OpenAI Whisper, a powerful automatic speech recognition (ASR) system. It is based on Ubuntu 24.04 and includes the necessary dependencies for running Whisper seamlessly.
+This Docker image provides a convenient environment for running [OpenAI Whisper](https://github.com/openai/whisper), a powerful automatic speech recognition (ASR) system. Based on Ubuntu 24.04 with Python 3.12 and all necessary dependencies included.
 
 ## Prerequisites
 
-Before you can use this Docker image, you need to have Docker installed on your system.
+- [Docker](https://docs.docker.com/get-docker/)
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) (for GPU mode only)
 
-### Installing Docker
+## Quick Start
 
-Follow the instructions on the [official Docker website](https://docs.docker.com/get-docker/) to install Docker for your operating system.
+1. Place your audio files in the `audio-files/` directory
+2. Run the transcription (see examples below)
+3. Find the output in the same `audio-files/` directory
 
 ## Usage
 
-### Using Docker Compose (recommended)
+### Docker Compose (Recommended)
 
-Build the image:
+**Build:**
 ```bash
 docker compose --profile gpu build
 ```
 
-#### GPU mode
+**GPU mode:**
 ```bash
 docker compose run --rm whisper-gpu whisper audio-file.mp3 --device cuda --model turbo --language Italian --output_dir /app --output_format txt
 ```
 
-#### CPU mode
+**CPU mode:**
 ```bash
 docker compose run --rm whisper-cpu whisper audio-file.mp3 --model turbo --language Italian --output_dir /app --output_format txt
 ```
 
-### Using Docker directly
+### Docker Direct
 
-Build the Docker image:
-
+**Build:**
 ```bash
 docker build -t openai-whisper .
 ```
 
-#### Running with GPU
+**GPU mode:**
 ```bash
 docker run --gpus all -it -v ${PWD}/models:/root/.cache/whisper -v ${PWD}/audio-files:/app openai-whisper whisper audio-file.mp3 --device cuda --model turbo --language Italian --output_dir /app --output_format txt
 ```
 
-#### Running with CPU
+**CPU mode:**
 ```bash
 docker run -it -v ${PWD}/models:/root/.cache/whisper -v ${PWD}/audio-files:/app openai-whisper whisper audio-file.mp3 --model turbo --language Italian --output_dir /app --output_format txt
 ```
 
-### Choosing the Right Model
+## Volume Mounts
 
-Whisper supports multiple models with varying resource requirements and performance levels.
+| Local Path | Container Path | Description |
+|------------|----------------|-------------|
+| `./models` | `/root/.cache/whisper` | Cached Whisper models (persisted between runs) |
+| `./audio-files` | `/app` | Input audio files and output transcriptions |
 
-- **`large-v3`**:
-  The most accurate model, but it requires substantial VRAM (10-15 GB). Recommended for powerful GPUs with sufficient memory.
+## Models
 
-- **`turbo`**:
-  A more memory-efficient alternative to `large-v3`, offering near-comparable accuracy. This is suitable for GPUs with limited VRAM (e.g., 8 GB VRAM).
+| Model | VRAM Required | Description |
+|-------|---------------|-------------|
+| `large-v3` | 10-15 GB | Most accurate, recommended for powerful GPUs |
+| `turbo` | ~8 GB | Memory-efficient, near-comparable accuracy |
 
-### Additional Commands
-You can also check the GPU information using the following command:
+## Useful Commands
 
+Check GPU information:
 ```bash
 docker run --gpus all -it openai-whisper nvidia-smi
 ```
 
 ## References
+
 - [OpenAI Whisper GitHub Repository](https://github.com/openai/whisper)
-
 - [NVIDIA Container Toolkit Installation Guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
-
 - [Docker Official Website](https://docs.docker.com/get-docker/)
-
-Feel free to explore and adapt this Docker image based on your specific use case and requirements. For more details on OpenAI Whisper and its usage, refer to the official documentation.
