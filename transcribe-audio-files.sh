@@ -7,7 +7,7 @@ input_dir="${INPUT_DIR:-"$script_dir/audio-files"}"
 model_cache_dir="${MODEL_CACHE_DIR:-"$script_dir/models"}"
 image_name="${IMAGE_NAME:-openai-whisper}"
 model="${MODEL:-base}"
-language="${LANGUAGE:-}"
+language="${LANGUAGE:-Russian}"
 output_format="${OUTPUT_FORMAT:-txt}"
 
 supported_extensions=(
@@ -117,4 +117,5 @@ for input_file in "${files[@]}"; do
 done
 
 total_elapsed=$((SECONDS - started_at))
-echo "Done. Processed: $processed, skipped: $skipped, total time: $(human_duration "$total_elapsed")"
+total_duration="$(human_duration "$total_elapsed")"
+echo "Done. Processed: $processed, skipped: $skipped, total time: $total_duration"
