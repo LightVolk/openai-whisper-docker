@@ -6,7 +6,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 input_dir="${INPUT_DIR:-"$script_dir/audio-files"}"
 model_cache_dir="${MODEL_CACHE_DIR:-"$script_dir/models"}"
 image_name="${IMAGE_NAME:-openai-whisper}"
-model="${MODEL:-turbo}"
+model="${MODEL:-base}"
 language="${LANGUAGE:-}"
 output_format="${OUTPUT_FORMAT:-txt}"
 
@@ -39,6 +39,16 @@ fi
 
 mkdir -p "$model_cache_dir"
 
+echo "Input directory: $input_dir"
+echo "Model cache: $model_cache_dir"
+echo "Whisper model: $model"
+if [[ -n "$language" ]]; then
+  echo "Language: $language"
+else
+  echo "Language: auto-detect"
+fi
+echo "Output format: $output_format"
+
 if ! docker image inspect "$image_name" >/dev/null 2>&1; then
   echo "Building Docker image: $image_name"
   docker build -t "$image_name" "$script_dir"
@@ -66,6 +76,15 @@ fi
 
 processed=0
 skipped=0
+started_at="${SECONDS}"
+
+human_duration() {
+  local total_seconds="$1"
+  local hours=$((total_seconds / 3600))
+  local minutes=$(((total_seconds % 3600) / 60))
+  local seconds=$((total_seconds % 60))
+  printf '%02d:%02d:%02d' "$hours" "$minutes" "$seconds"
+}
 
 for input_file in "${files[@]}"; do
   [[ -f "$input_file" ]] || continue
@@ -80,7 +99,8 @@ for input_file in "${files[@]}"; do
     continue
   fi
 
-  echo "Transcribing $base_name"
+  file_started_at="${SECONDS}"
+  echo "[$((processed + skipped + 1))/${#files[@]}] Transcribing $base_name"
   whisper_args=(whisper "/app/$base_name" --model "$model" --output_dir /app --output_format "$output_format")
   if [[ -n "$language" ]]; then
     whisper_args+=(--language "$language")
@@ -91,7 +111,10 @@ for input_file in "${files[@]}"; do
     -v "$input_dir:/app" \
     "$image_name" "${whisper_args[@]}"
 
+  file_elapsed=$((SECONDS - file_started_at))
+  echo "Finished $base_name in $(human_duration "$file_elapsed")"
   processed=$((processed + 1))
 done
 
-echo "Done. Processed: $processed, skipped: $skipped"
+total_elapsed=$((SECONDS - started_at))
+echo "Done. Processed: $processed, skipped: $skipped, total time: $(human_duration "$total_elapsed")"
