@@ -17,6 +17,22 @@ This Docker image provides a convenient environment for running [OpenAI Whisper]
 2. Run the transcription (see examples below)
 3. Find the output in the same `audio-files/` directory
 
+### macOS batch script
+
+If you want Whisper to scan `audio-files/` automatically, use the helper script:
+
+```bash
+./transcribe-audio-files.sh
+```
+
+To force Russian transcription:
+
+```bash
+LANGUAGE=Russian ./transcribe-audio-files.sh
+```
+
+The script skips files that already have a matching `.txt` transcript next to them.
+
 ## Usage
 
 ### Docker Compose (Recommended)
