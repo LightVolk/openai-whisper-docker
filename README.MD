@@ -25,7 +25,7 @@ If you want Whisper to scan `audio-files/` automatically, use the helper script:
 ./transcribe-audio-files.sh
 ```
 
-By default the script uses Russian and the `medium` model. To override:
+By default the script uses Russian and the `small` model. To override:
 
 ```bash
 MODEL=base LANGUAGE=Russian ./transcribe-audio-files.sh

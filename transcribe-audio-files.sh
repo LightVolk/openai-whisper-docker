@@ -6,7 +6,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 input_dir="${INPUT_DIR:-"$script_dir/audio-files"}"
 model_cache_dir="${MODEL_CACHE_DIR:-"$script_dir/models"}"
 image_name="${IMAGE_NAME:-openai-whisper}"
-model="${MODEL:-medium}"
+model="${MODEL:-small}"
 language="${LANGUAGE:-Russian}"
 output_format="${OUTPUT_FORMAT:-txt}"
 
