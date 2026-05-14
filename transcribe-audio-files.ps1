@@ -53,8 +53,16 @@ Write-Host "Whisper model: $model"
 Write-Host "Language: $language"
 Write-Host "Output format: $outputFormat"
 
-& docker image inspect $imageName *> $null
-if ($LASTEXITCODE -ne 0) {
+$imageExists = $true
+try {
+  & docker image inspect $imageName 1>$null 2>$null
+  $imageExists = ($LASTEXITCODE -eq 0)
+}
+catch {
+  $imageExists = $false
+}
+
+if (-not $imageExists) {
   Write-Host "Building Docker image: $imageName"
   & docker build -t $imageName $scriptDir
   if ($LASTEXITCODE -ne 0) {
@@ -92,8 +100,8 @@ foreach ($inputFile in $files) {
   $dockerArgs = @(
     "run",
     "--rm",
-    "-v", "$modelMount:/root/.cache/whisper",
-    "-v", "$inputMount:/app",
+    "-v", "${modelMount}:/root/.cache/whisper",
+    "-v", "${inputMount}:/app",
     $imageName,
     "whisper",
     "/app/$baseName",
