@@ -44,6 +44,8 @@ MODEL=turbo LANGUAGE=Russian MAX_PARALLEL=2 ./transcribe-audio-files.sh
 
 The script skips files that already have a matching `.txt` transcript next to them. It also creates temporary `.whisper-lock` directories while a file is being processed to avoid duplicate work across concurrent runs.
 
+For each file, the script prints the elapsed time required for transcription, for example: `Finished recording.mp3 in 00:01:23`. At the end it also prints the total script runtime.
+
 ### Windows 11 batch script
 
 Use the PowerShell helper to scan `audio-files/` automatically:
@@ -73,3 +75,5 @@ $env:MODEL="turbo"; $env:LANGUAGE="Russian"; $env:MAX_PARALLEL="2"; .\transcribe
 ```
 
 The script skips files that already have a matching `.txt` transcript next to them. It also creates temporary `.whisper-lock` directories while a file is being processed to avoid duplicate work across concurrent runs.
+
+For each file, the script prints the elapsed time required for transcription, for example: `Finished recording.mp3 in 00:01:23`. At the end it also prints the total script runtime.
