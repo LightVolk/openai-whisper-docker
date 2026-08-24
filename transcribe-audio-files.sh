@@ -158,7 +158,12 @@ remove_cleanup_path() {
     fi
   done
 
-  cleanup_paths=( "${updated[@]}" )
+  # With `set -u`, expanding an empty array can raise an "unbound variable"
+  # error in some Bash versions. Keep the array explicitly empty instead.
+  cleanup_paths=()
+  if [[ ${#updated[@]} -gt 0 ]]; then
+    cleanup_paths=( "${updated[@]}" )
+  fi
 }
 
 for i in "${!files[@]}"; do
@@ -291,8 +296,16 @@ reap_one_job() {
 
         unset 'active_pids[idx]'
         unset 'active_result_files[idx]'
-        active_pids=( "${active_pids[@]}" )
-        active_result_files=( "${active_result_files[@]}" )
+        if [[ ${#active_pids[@]} -gt 0 ]]; then
+          active_pids=( "${active_pids[@]}" )
+        else
+          active_pids=()
+        fi
+        if [[ ${#active_result_files[@]} -gt 0 ]]; then
+          active_result_files=( "${active_result_files[@]}" )
+        else
+          active_result_files=()
+        fi
         return
       fi
     done
